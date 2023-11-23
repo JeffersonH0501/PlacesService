@@ -20,9 +20,17 @@ def check_place(data):
     r = requests.get(settings.PATH_PLACE, headers={"Accept":"application/json"})
     places = r.json()
     for place in places:
-        if data["place"] == place["id"]:
+        if data["place"] == place["name"]:
             return True
     return False
+
+def obtain_id_place(name_place):
+    r = requests.get(settings.PATH_PLACE, headers={"Accept":"application/json"})
+    places = r.json()
+    for place in places:
+        if name_place == place["name"]:
+            return place["id"]
+    return None
 
 def MeasurementList(request):
     queryset = Measurement.objects.all()
@@ -39,7 +47,8 @@ def MeasurementCreate(request):
                 measurement.variable = data_json['variable']
                 measurement.value = data_json['value']
                 measurement.unit = data_json['unit']
-                measurement.place = data_json['place']
+                id_place = obtain_id_place(data_json['place'])
+                measurement.place = id_place
                 measurement.save()
                 return HttpResponse("successfully created measurement")
             else:
@@ -59,7 +68,8 @@ def MeasurementsCreate(request):
                     db_measurement.variable = measurement['variable']
                     db_measurement.value = measurement['value']
                     db_measurement.unit = measurement['unit']
-                    db_measurement.place = measurement['place']
+                    id_place = obtain_id_place(data_json['place'])
+                    db_measurement.place = id_place
                     measurement_list.append(db_measurement)
                 else:
                     return HttpResponse("unsuccessfully created measurement. Place does not exist")
