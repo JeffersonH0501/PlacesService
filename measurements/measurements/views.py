@@ -48,7 +48,7 @@ def MeasurementCreate(request):
                 measurement.value = data_json['value']
                 measurement.unit = data_json['unit']
                 id_place = obtain_id_place(data_json['place'])
-                measurement.place = id_place
+                measurement.place = int(id_place)
                 measurement.save()
                 return HttpResponse("successfully created measurement")
             else:
@@ -68,8 +68,8 @@ def MeasurementsCreate(request):
                     db_measurement.variable = measurement['variable']
                     db_measurement.value = measurement['value']
                     db_measurement.unit = measurement['unit']
-                    id_place = obtain_id_place(data_json['place'])
-                    db_measurement.place = id_place
+                    id_place = obtain_id_place(measurement['place'])
+                    db_measurement.place = int(id_place)
                     measurement_list.append(db_measurement)
                 else:
                     return HttpResponse("unsuccessfully created measurement. Place does not exist")
